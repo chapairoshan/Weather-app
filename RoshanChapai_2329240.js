@@ -1,3 +1,7 @@
+// Name: Roshan Chapai 
+// ID: 2329240
+// Group: L4ACG5
+
 // Defining the API key and assigned city
 const apiKey = "648684a36ad3efe73c8b76c880e40142";
 const assigned_City = "DERBY, GB";
@@ -46,27 +50,44 @@ function getWeather(city) {
             const date = utc_date.toLocaleDateString();
             const day = utc_date.toLocaleDateString('en-GB', { weekday: 'short' });
             
-            // Set the URL for the weather icon based on the time of day and weather condition
-            let iconUrl
-            if (hours >= 6 && hours <= 18) {
-                if (main == 'Clouds'){
-                    iconUrl = `day_icons/${description}.svg`;
+            //Icons are available in the google drive link pasted at the bottom of this file
+            // Set the URL for the weather icon based on the time of day and weather condition,
+            // weather icons are set as main for most weather icons and description for few
+            let iconUrl;
+            try {
+                if (hours >= 6 && hours <= 18) {
+                    // If the weather condition is "Clouds", use the icon with the "description" name for daytime,
+                    // otherwise use the icon with the "main" name for daytime
+                    if (main == 'Clouds'){
+                        iconUrl = `day_icons/${description}.svg`;
+                    }
+                    else{
+                        iconUrl = `day_icons/${main}.svg`;
+                    }
+                } else {
+                    //for nighttime
+                    // If the icon code is "50d", use the "haze" icon for haze,
+                    // otherwise check if the weather condition is "Clouds" and use the icon with the "description" name,
+                    // otherwise use the icon with the "main" name for nighttime
+                    if (icon == '50d'){
+                        iconUrl = `night_icons/haze.svg`;
+                    }
+                    else if(main == 'Clouds'){
+                        iconUrl = `night_icons/${description}.svg`
+                        console.log(main)
+                    }
+                    else{
+                        iconUrl = `night_icons/${main}.svg`;
+                    }
                 }
-                else{
-                    iconUrl = `day_icons/${main}.svg`;
-                }
-              } else {
-                if (icon == '50d'){
-                    iconUrl = `night_icons/haze.svg`;
-                }
-                else if(main == 'Clouds'){
-                    iconUrl = `night_icons/${description}.svg`
-                    console.log(main)
-                }
-                else{
-                    iconUrl = `night_icons/${main}.svg`;
-                }
-               }
+            } catch (error) {
+                if (error.status === 404) {
+                    iconUrl = `http://openweathermap.org/img/wn/${icon}@4x.png`
+                    console.log(icon);
+                  } else {
+                    console.log("An error occurred:", error.message);
+                  }
+            }
 
             // Updating the DOM with the weather data
             const weatherIcon = document.querySelector('.weather img');
@@ -102,3 +123,7 @@ function getWeather(city) {
             alert('Error fetching weather data');
         });
 }
+
+//day_icons -> https://drive.google.com/drive/folders/1i_ojPxqzDz8cba-ETaAw_17p6BWkfYSe?usp=share_link
+//night_icons -> https://drive.google.com/drive/folders/119UVQhAUJY0cMHYZx9pIyoH7Db6xtHHm?usp=share_link
+//I could not upload all these icons in canvas so I have kept them in drive
